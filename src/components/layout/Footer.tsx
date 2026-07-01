@@ -52,27 +52,19 @@ export function Footer() {
             <ul className="space-y-2 text-sm text-secondary-foreground/80">
               <li><Link href="/about" className="hover:text-gold transition-colors">About Us</Link></li>
               <li><Link href="/contact" className="hover:text-gold transition-colors">Contact</Link></li>
+              <li><Link href="/help" className="hover:text-gold transition-colors">Help Center</Link></li>
               <li><Link href="/privacy" className="hover:text-gold transition-colors">Privacy Policy</Link></li>
-              <li><Link href="/terms" className="hover:text-gold transition-colors">Terms of Service</Link></li>
             </ul>
           </div>
 
-          {/* Newsletter */}
+          {/* Contact Info */}
           <div>
-            <h4 className="font-semibold mb-4 text-gold">Subscribe</h4>
-            <p className="text-sm text-secondary-foreground/80 mb-4">
-              Get updates on fresh arrivals and organic farming tips.
-            </p>
-            <form className="flex" onSubmit={(e) => e.preventDefault()}>
-              <input 
-                type="email" 
-                placeholder="Your email address" 
-                className="bg-secondary-foreground/10 border border-secondary-foreground/20 rounded-l-md px-4 py-2 text-sm w-full focus:outline-none focus:border-gold transition-colors"
-              />
-              <button className="bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 rounded-r-md transition-colors">
-                Subscribe
-              </button>
-            </form>
+            <h4 className="font-semibold mb-4 text-gold">Customer Support</h4>
+            <ul className="space-y-2 text-sm text-secondary-foreground/80">
+              <li className="font-medium text-white">Prachi Shivale</li>
+              <li>+91 9561865706</li>
+              <li>prachishivale124@gmail.com</li>
+            </ul>
           </div>
         </div>
 

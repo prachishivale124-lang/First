@@ -14,26 +14,32 @@ export function FarmerTimeline() {
 
   const steps = [
     {
-      title: "Farmer",
-      description: "Produce is carefully grown by our certified organic farming partners.",
+      title: "Farmer Direct Supply",
+      description: "Direct partnership with local farmers to ensure fair trade and fresh produce.",
       icon: <Sprout className="w-8 h-8" />,
       color: "bg-primary text-primary-foreground",
     },
     {
-      title: "Quality Check",
-      description: "Rigorous testing for pesticide residue and overall quality.",
+      title: "Fresh Picking Process",
+      description: "Produce is hand-picked at peak ripeness for maximum flavor and nutrition.",
+      icon: <CheckCircle2 className="w-8 h-8" />,
+      color: "bg-green-600 text-white",
+    },
+    {
+      title: "Quality Checking Process",
+      description: "Rigorous testing for pesticide residue and overall quality standards.",
       icon: <CheckCircle2 className="w-8 h-8" />,
       color: "bg-gold text-white",
     },
     {
-      title: "Fresh Packing",
-      description: "Eco-friendly packing immediately after harvest to preserve freshness.",
+      title: "Safe Packaging",
+      description: "Eco-friendly, safe packaging to preserve freshness during transit.",
       icon: <PackageCheck className="w-8 h-8" />,
       color: "bg-accent text-white",
     },
     {
-      title: "Home Delivery",
-      description: "Swift, temperature-controlled delivery to your doorstep.",
+      title: "Home Delivery From Farm To Customer",
+      description: "Swift, temperature-controlled delivery directly to your doorstep.",
       icon: <Home className="w-8 h-8" />,
       color: "bg-secondary text-secondary-foreground",
     },
@@ -70,7 +76,7 @@ export function FarmerTimeline() {
             style={{ scaleX: scrollYProgress }}
           />
 
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-12 md:gap-4 relative z-10">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-12 md:gap-4 relative z-10">
             {steps.map((step, index) => {
               const isEven = index % 2 === 0;
               return (

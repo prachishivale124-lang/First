@@ -45,16 +45,17 @@ export default function ContactPage() {
             <div className="mb-8">
               <h3 className="text-xl font-bold mb-2 text-gold">Customer Support</h3>
               <p className="text-muted-foreground mb-4">Our dedicated team is available Monday through Saturday to assist you with any inquiries.</p>
-              <div className="space-y-2">
-                <p className="flex items-center gap-3"><span className="font-semibold w-20">Email:</span> support@bhishma.com</p>
-                <p className="flex items-center gap-3"><span className="font-semibold w-20">Phone:</span> +1 (800) 123-4567</p>
-                <p className="flex items-center gap-3"><span className="font-semibold w-20">Hours:</span> Mon-Sat, 9am - 6pm</p>
+              <div className="space-y-3 mt-6">
+                <p className="flex items-center gap-3"><span className="font-semibold w-24">Name:</span> Prachi Shivale</p>
+                <p className="flex items-center gap-3"><span className="font-semibold w-24">Email:</span> prachishivale124@gmail.com</p>
+                <p className="flex items-center gap-3"><span className="font-semibold w-24">Phone:</span> +91 9561865706</p>
+                <p className="flex items-center gap-3"><span className="font-semibold w-24">Hours:</span> Mon-Sat, 9am - 6pm</p>
               </div>
             </div>
             
-            <div className="p-6 bg-primary/5 rounded-xl border border-primary/10">
-              <h3 className="text-lg font-bold mb-2 text-primary">Farm Partnerships</h3>
-              <p className="text-sm text-muted-foreground">Are you an organic farmer interested in partnering with us? Reach out to our sourcing team at farmers@bhishma.com.</p>
+            <div className="p-6 bg-primary/5 rounded-xl border border-primary/10 mt-8">
+              <h3 className="text-lg font-bold mb-2 text-primary">Seller / Farm Partnerships</h3>
+              <p className="text-sm text-muted-foreground">Are you an organic farmer interested in partnering with us? Reach out to our support representative directly for approval.</p>
             </div>
           </div>
         </div>

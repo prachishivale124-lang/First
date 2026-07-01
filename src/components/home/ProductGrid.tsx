@@ -1,18 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
+import Link from "next/link";
 import { ProductCard, Product } from "./ProductCard";
 
 const DUMMY_PRODUCTS: Product[] = [
-  { id: "1", name: "Fresh Tomato", price: 4.99, weight: "1 kg", category: "Vegetables", image: "/images/tomato.png", isOrganic: true, color: "#ef4444" },
-  { id: "2", name: "Organic Potato", price: 3.49, weight: "2 kg", category: "Vegetables", image: "/images/potato.png", isOrganic: true, color: "#d97706" },
-  { id: "3", name: "Crispy Carrot", price: 2.99, weight: "1 kg", category: "Vegetables", image: "/images/carrot.png", isOrganic: true, color: "#f97316" },
-  { id: "4", name: "Green Spinach", price: 5.99, weight: "500 g", category: "Vegetables", image: "/images/spinach.png", isOrganic: true, color: "#22c55e" },
-  { id: "5", name: "Sweet Apple", price: 6.99, weight: "1 kg", category: "Fruits", image: "/images/apple.png", isOrganic: true, color: "#dc2626" },
-  { id: "6", name: "Alphonso Mango", price: 8.99, weight: "1 kg", category: "Fruits", image: "/images/mango.png", isOrganic: true, color: "#fbbf24" },
-  { id: "7", name: "Juicy Orange", price: 5.49, weight: "1 kg", category: "Fruits", image: "/images/orange.png", isOrganic: true, color: "#f97316" },
-  { id: "8", name: "Fresh Banana", price: 2.49, weight: "1 kg", category: "Fruits", image: "/images/banana.png", isOrganic: true, color: "#facc15" },
+  { id: "1", name: "Fresh Tomato", price: 399, weight: "1 kg", category: "Vegetables", image: "/images/tomato.png", isOrganic: true, color: "#ef4444" },
+  { id: "2", name: "Organic Potato", price: 279, weight: "2 kg", category: "Vegetables", image: "/images/potato.png", isOrganic: true, color: "#d97706" },
+  { id: "3", name: "Crispy Carrot", price: 239, weight: "1 kg", category: "Vegetables", image: "/images/carrot.png", isOrganic: true, color: "#f97316" },
+  { id: "4", name: "Green Spinach", price: 479, weight: "500 g", category: "Vegetables", image: "/images/spinach.png", isOrganic: true, color: "#22c55e" },
+  { id: "5", name: "Sweet Apple", price: 559, weight: "1 kg", category: "Fruits", image: "/images/apple.png", isOrganic: true, color: "#dc2626" },
+  { id: "6", name: "Alphonso Mango", price: 719, weight: "1 kg", category: "Fruits", image: "/images/mango.png", isOrganic: true, color: "#fbbf24" },
+  { id: "7", name: "Juicy Orange", price: 439, weight: "1 kg", category: "Fruits", image: "/images/orange.png", isOrganic: true, color: "#f97316" },
+  { id: "8", name: "Fresh Banana", price: 199, weight: "1 kg", category: "Fruits", image: "/images/banana.png", isOrganic: true, color: "#facc15" },
 ];
 
 export function ProductGrid() {
@@ -20,9 +21,11 @@ export function ProductGrid() {
   
   const filters = ["All", "Vegetables", "Fruits"];
   
-  const filteredProducts = activeFilter === "All" 
-    ? DUMMY_PRODUCTS 
-    : DUMMY_PRODUCTS.filter(p => p.category === activeFilter);
+  const filteredProducts = useMemo(() => {
+    return activeFilter === "All" 
+      ? DUMMY_PRODUCTS 
+      : DUMMY_PRODUCTS.filter(p => p.category === activeFilter);
+  }, [activeFilter]);
 
   return (
     <section className="py-24 bg-background relative" id="products">
@@ -78,10 +81,10 @@ export function ProductGrid() {
         </div>
         
         <div className="mt-16 text-center">
-          <button className="text-primary font-semibold hover:text-gold transition-colors inline-flex items-center gap-2 group">
+          <Link href="/products" className="text-primary font-semibold hover:text-gold transition-colors inline-flex items-center gap-2 group">
             View All Products
             <span className="group-hover:translate-x-1 transition-transform">→</span>
-          </button>
+          </Link>
         </div>
       </div>
     </section>

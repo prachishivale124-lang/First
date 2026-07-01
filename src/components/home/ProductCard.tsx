@@ -6,6 +6,8 @@ import { motion } from "framer-motion";
 import { ShoppingCart, Heart, Plus } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { useCart } from "@/lib/CartContext";
 
 export interface Product {
   id: string;
@@ -25,12 +27,13 @@ interface ProductCardProps {
 
 export function ProductCard({ product, index }: ProductCardProps) {
   const [isHovered, setIsHovered] = useState(false);
+  const { addToCart } = useCart();
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-50px" }}
+      viewport={{ once: true }}
       transition={{ duration: 0.5, delay: index * 0.1 }}
       className="group"
       onMouseEnter={() => setIsHovered(true)}
@@ -57,7 +60,7 @@ export function ProductCard({ product, index }: ProductCardProps) {
         </div>
 
         {/* Image */}
-        <div className="relative w-full aspect-square mb-4 z-10 flex items-center justify-center">
+        <Link href={`/products/${product.id}`} className="relative w-full aspect-square mb-4 z-10 flex items-center justify-center block">
           <motion.div
             animate={{ scale: isHovered ? 1.1 : 1 }}
             transition={{ duration: 0.4, ease: "easeOut" }}
@@ -80,26 +83,36 @@ export function ProductCard({ product, index }: ProductCardProps) {
               className="object-contain drop-shadow-xl"
             /> */}
           </motion.div>
-        </div>
+        </Link>
 
         {/* Info */}
         <div className="flex-1 flex flex-col z-10">
           <div className="text-sm text-muted-foreground mb-1">{product.category}</div>
-          <h3 className="text-lg font-bold text-foreground mb-1 line-clamp-1 group-hover:text-primary transition-colors">
-            {product.name}
-          </h3>
+          <Link href={`/products/${product.id}`} className="block">
+            <h3 className="text-lg font-bold text-foreground mb-1 line-clamp-1 group-hover:text-primary transition-colors">
+              {product.name}
+            </h3>
+          </Link>
           <div className="text-sm text-muted-foreground mb-4">{product.weight}</div>
           
           <div className="mt-auto flex items-center justify-between pt-4 border-t border-border/50">
             <div className="flex flex-col">
-              <span className="text-xs text-muted-foreground line-through opacity-70">
-                ${(product.price * 1.2).toFixed(2)}
+              <span className="text-sm text-muted-foreground line-through decoration-primary/50 mr-2">
+                ₹{(product.price * 1.2).toFixed(0)}
               </span>
-              <span className="text-xl font-bold text-foreground">
-                ${product.price.toFixed(2)}
+              <span className="text-lg font-bold text-foreground">
+                ₹{product.price.toFixed(0)}
               </span>
             </div>
-            <Button size="icon" className="h-10 w-10 rounded-full bg-primary hover:bg-primary/90 text-white shadow-md group-hover:scale-110 transition-transform">
+            <Button 
+              size="icon" 
+              className="h-10 w-10 rounded-full bg-primary hover:bg-primary/90 text-white shadow-md group-hover:scale-110 transition-transform"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                addToCart(product);
+              }}
+            >
               <Plus className="w-5 h-5" />
             </Button>
           </div>

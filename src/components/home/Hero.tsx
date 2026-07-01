@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, ShoppingBag } from "lucide-react";
 import * as THREE from "three";
+import Link from "next/link";
 
 // Abstract 3D Organic Shapes to represent fruits/vegetables
 function OrganicShape({ color, position, speed, distort, radius }: any) {
@@ -137,14 +138,18 @@ export function Hero() {
             transition={{ delay: 0.7, duration: 0.5 }}
             className="flex flex-col sm:flex-row items-center justify-center gap-4"
           >
-            <Button size="lg" className="w-full sm:w-auto h-14 px-8 text-base rounded-full shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 bg-primary text-white">
-              <ShoppingBag className="mr-2 h-5 w-5" />
-              Shop Now
-            </Button>
-            <Button size="lg" variant="outline" className="w-full sm:w-auto h-14 px-8 text-base rounded-full border-2 border-primary text-primary hover:bg-primary/5 transition-all hover:-translate-y-1">
-              Explore Products
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
+            <Link href="/products" className="w-full sm:w-auto">
+              <Button size="lg" className="w-full sm:w-auto h-14 px-8 text-base rounded-full shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 bg-primary text-white">
+                <ShoppingBag className="mr-2 h-5 w-5" />
+                Shop Now
+              </Button>
+            </Link>
+            <Link href="/products" className="w-full sm:w-auto">
+              <Button size="lg" variant="outline" className="w-full sm:w-auto h-14 px-8 text-base rounded-full border-2 border-primary text-primary hover:bg-primary/5 transition-all hover:-translate-y-1">
+                Explore Products
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+            </Link>
           </motion.div>
         </motion.div>
       </div>

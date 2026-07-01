@@ -4,10 +4,13 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Search, ShoppingCart, User, Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useCart } from "@/lib/CartContext";
 
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const { cartCount } = useCart();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -57,20 +60,32 @@ export function Navbar() {
             ))}
           </nav>
 
-          {/* Icons */}
+          {/* Icons & Search */}
           <div className="hidden lg:flex items-center gap-6">
-            <button className="text-foreground hover:text-primary transition-colors">
-              <Search className="w-5 h-5" />
-            </button>
+            <form action="/products" className="relative flex items-center">
+              <input 
+                type="text" 
+                name="q"
+                placeholder="Search products..." 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10 pr-4 py-2 rounded-full border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 w-48 transition-all focus:w-64"
+              />
+              <button type="submit" className="absolute left-3 text-muted-foreground hover:text-primary transition-colors">
+                <Search className="w-4 h-4" />
+              </button>
+            </form>
             <Link href="/cart" className="relative text-foreground hover:text-primary transition-colors">
               <ShoppingCart className="w-5 h-5" />
-              <span className="absolute -top-2 -right-2 bg-accent text-white text-xs font-bold w-4 h-4 rounded-full flex items-center justify-center">
-                0
-              </span>
+              {cartCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-accent text-white text-xs font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                  {cartCount}
+                </span>
+              )}
             </Link>
-            <button className="text-foreground hover:text-primary transition-colors">
+            <Link href="/seller/dashboard" className="text-foreground hover:text-primary transition-colors" title="Seller Dashboard">
               <User className="w-5 h-5" />
-            </button>
+            </Link>
           </div>
 
           {/* Mobile Menu Toggle */}
@@ -109,9 +124,11 @@ export function Navbar() {
                 </button>
                 <Link href="/cart" className="relative text-foreground hover:text-primary transition-colors">
                   <ShoppingCart className="w-5 h-5" />
-                  <span className="absolute -top-2 -right-2 bg-accent text-white text-xs font-bold w-4 h-4 rounded-full flex items-center justify-center">
-                    0
-                  </span>
+                  {cartCount > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-accent text-white text-xs font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                      {cartCount}
+                    </span>
+                  )}
                 </Link>
                 <button className="text-foreground hover:text-primary transition-colors">
                   <User className="w-5 h-5" />
