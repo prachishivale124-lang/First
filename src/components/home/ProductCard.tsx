@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { ShoppingCart, Heart, Plus } from "lucide-react";
+import { ShoppingCart, Heart, Star, ShieldCheck } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -13,11 +13,15 @@ export interface Product {
   id: string;
   name: string;
   price: number;
+  discount: number;
   weight: string;
-  category: string;
-  image: string;
+  category?: { name: string; slug: string } | string;
+  imageUrls: string[];
   isOrganic: boolean;
-  color: string;
+  seller?: { name: string; farmName?: string };
+  sellerName?: string;
+  rating: number;
+  reviewCount: number;
 }
 
 interface ProductCardProps {
@@ -29,93 +33,111 @@ export function ProductCard({ product, index }: ProductCardProps) {
   const [isHovered, setIsHovered] = useState(false);
   const { addToCart } = useCart();
 
+  const originalPrice = product.price + (product.price * (product.discount / 100));
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.5, delay: index * 0.1 }}
-      className="group"
+      className="group relative bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:border-emerald-200 transition-all duration-300 flex flex-col overflow-hidden h-full"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div className="relative glassmorphism rounded-2xl p-4 h-full flex flex-col transition-all duration-300 hover:green-glow hover:-translate-y-2 border border-border/50 bg-card overflow-hidden">
-        
-        {/* Background Decorative Blob */}
-        <div 
-          className="absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl opacity-20 -mr-10 -mt-10 transition-opacity duration-300"
-          style={{ backgroundColor: product.color, opacity: isHovered ? 0.4 : 0.1 }}
-        />
+      {/* Top Badges */}
+      <div className="absolute top-3 left-3 z-10 flex flex-col gap-2">
+        {product.discount > 0 && (
+          <Badge className="bg-red-500 hover:bg-red-600 text-white border-0 font-bold px-2 py-0.5 rounded text-[11px]">
+            {product.discount}% OFF
+          </Badge>
+        )}
+      </div>
+      
+      <div className="absolute top-3 right-3 z-10">
+        <button className="text-gray-400 hover:text-red-500 transition-colors p-1.5 bg-white/80 backdrop-blur-md rounded-full shadow-sm hover:shadow">
+          <Heart className={`w-4 h-4 ${isHovered ? "text-red-500 fill-red-500/10" : ""}`} />
+        </button>
+      </div>
 
-        {/* Top Badges & Actions */}
-        <div className="flex justify-between items-start z-10 mb-2">
-          {product.isOrganic && (
-            <Badge variant="secondary" className="bg-primary/10 text-primary hover:bg-primary/20 border-0 font-medium">
-              100% Organic
-            </Badge>
-          )}
-          <button className="text-muted-foreground hover:text-accent transition-colors p-2 bg-background/50 backdrop-blur-md rounded-full">
-            <Heart className={`w-4 h-4 ${isHovered ? "text-accent fill-accent/20" : ""}`} />
-          </button>
-        </div>
-
-        {/* Image */}
-        <Link href={`/products/${product.id}`} className="relative w-full aspect-square mb-4 z-10 flex items-center justify-center block">
-          <motion.div
-            animate={{ scale: isHovered ? 1.1 : 1 }}
-            transition={{ duration: 0.4, ease: "easeOut" }}
-            className="w-full h-full relative"
-          >
-            {/* Placeholder for actual image - using a colored div for abstract look since we don't have images */}
-            <div 
-              className="absolute inset-0 m-4 rounded-full shadow-inner flex items-center justify-center"
-              style={{ background: `radial-gradient(circle at 30% 30%, ${product.color} 0%, transparent 70%)` }}
-            >
-              <span className="text-6xl opacity-80 mix-blend-overlay font-bold select-none">
-                {product.name[0]}
-              </span>
-            </div>
-            {/* Actual image tag for production */}
-            {/* <Image 
-              src={product.image} 
+      {/* Image */}
+      <Link href={`/products/${product.id}`} className="relative w-full aspect-square flex items-center justify-center p-6 bg-gray-50/50">
+        <motion.div
+          animate={{ scale: isHovered ? 1.05 : 1 }}
+          transition={{ duration: 0.4, ease: "easeOut" }}
+          className="w-full h-full relative"
+        >
+          <div className="relative w-full h-full min-h-[160px]">
+            <Image 
+              src={product.imageUrls?.[0] || "/product-demo.png"} 
               alt={product.name} 
               fill 
-              className="object-contain drop-shadow-xl"
-            /> */}
-          </motion.div>
-        </Link>
-
-        {/* Info */}
-        <div className="flex-1 flex flex-col z-10">
-          <div className="text-sm text-muted-foreground mb-1">{product.category}</div>
-          <Link href={`/products/${product.id}`} className="block">
-            <h3 className="text-lg font-bold text-foreground mb-1 line-clamp-1 group-hover:text-primary transition-colors">
-              {product.name}
-            </h3>
-          </Link>
-          <div className="text-sm text-muted-foreground mb-4">{product.weight}</div>
-          
-          <div className="mt-auto flex items-center justify-between pt-4 border-t border-border/50">
-            <div className="flex flex-col">
-              <span className="text-sm text-muted-foreground line-through decoration-primary/50 mr-2">
-                ₹{(product.price * 1.2).toFixed(0)}
-              </span>
-              <span className="text-lg font-bold text-foreground">
-                ₹{product.price.toFixed(0)}
-              </span>
-            </div>
-            <Button 
-              size="icon" 
-              className="h-10 w-10 rounded-full bg-primary hover:bg-primary/90 text-white shadow-md group-hover:scale-110 transition-transform"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                addToCart(product);
-              }}
-            >
-              <Plus className="w-5 h-5" />
-            </Button>
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              className="object-contain p-2 mix-blend-multiply drop-shadow-md group-hover:scale-105 transition-transform duration-500" 
+            />
           </div>
+        </motion.div>
+      </Link>
+
+      {/* Info Container */}
+      <div className="p-4 flex-1 flex flex-col z-10 bg-white">
+        {/* Organic Badge & Seller */}
+        <div className="flex items-center justify-between mb-1">
+          {product.isOrganic && (
+            <div className="flex items-center text-xs font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded">
+              <ShieldCheck className="w-3 h-3 mr-1" /> Organic
+            </div>
+          )}
+          <span className="text-xs text-gray-500 font-medium">By {product.seller?.name || product.sellerName || "Farmer"}</span>
+        </div>
+
+        {/* Title */}
+        <Link href={`/products/${product.id}`} className="block mt-1 mb-1">
+          <h3 className="text-base font-bold text-gray-900 line-clamp-2 group-hover:text-emerald-600 transition-colors leading-tight">
+            {product.name}
+          </h3>
+        </Link>
+        
+        {/* Rating */}
+        <div className="flex items-center mb-2">
+          <div className="flex items-center">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <Star 
+                key={i} 
+                className={`w-3.5 h-3.5 ${i < Math.floor(product.rating) ? 'text-amber-400 fill-amber-400' : 'text-gray-300'}`} 
+              />
+            ))}
+          </div>
+          <span className="text-xs text-emerald-700 ml-1.5 hover:underline cursor-pointer">{product.rating || 0} ({product.reviewCount || 0})</span>
+        </div>
+
+        <div className="text-xs text-gray-600 mb-3 bg-gray-100 w-max px-2 py-1 rounded-md font-medium">
+          {product.weight}
+        </div>
+        
+        {/* Price & Action */}
+        <div className="mt-auto pt-4 flex flex-col xs:flex-row items-start xs:items-end justify-between gap-3">
+          <div className="flex flex-col">
+            {product.discount > 0 && (
+              <span className="text-xs text-muted-foreground line-through mb-0.5">
+                ₹{originalPrice.toFixed(0)}
+              </span>
+            )}
+            <div className="flex items-start text-foreground">
+              <span className="text-sm font-semibold mt-1">₹</span>
+              <span className="text-2xl font-bold leading-none">{product.price.toFixed(0)}</span>
+            </div>
+          </div>
+          <Button 
+            className="w-full xs:w-auto rounded-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold px-5 h-9 shadow-sm"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              addToCart(product as any);
+            }}
+          >
+            Add to Cart
+          </Button>
         </div>
       </div>
     </motion.div>

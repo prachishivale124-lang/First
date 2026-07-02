@@ -2,142 +2,131 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Search, ShoppingCart, User, Menu, X } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { Search, ShoppingCart, User, Package, Heart, Menu } from "lucide-react";
 import { useCart } from "@/lib/CartContext";
 
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [categories, setCategories] = useState<{name: string, slug: string}[]>([]);
   const { cartCount } = useCart();
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+      setIsScrolled(window.scrollY > 10);
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const navLinks = [
-    { name: "Home", href: "/" },
-    { name: "Vegetables", href: "/products?category=vegetables" },
-    { name: "Fruits", href: "/products?category=fruits" },
-    { name: "Organic Store", href: "/products" },
-    { name: "About", href: "/about" },
-    { name: "Contact", href: "/contact" },
-  ];
+  useEffect(() => {
+    fetch("/api/categories")
+      .then(res => res.json())
+      .then(data => {
+        if (data.categories) {
+          setCategories(data.categories.slice(0, 7)); // Show up to 7 categories in nav
+        }
+      })
+      .catch(console.error);
+  }, []);
 
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled
-          ? "glassmorphism py-4 shadow-sm"
-          : "bg-transparent py-6"
+          ? "bg-white/95 backdrop-blur-md shadow-sm border-b border-border"
+          : "bg-white border-b border-border"
       }`}
     >
-      <div className="container mx-auto px-4 md:px-8">
-        <div className="flex items-center justify-between">
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 group">
-            <span className="text-2xl font-bold tracking-tighter text-primary group-hover:text-gold transition-colors">
-              BHISHMA
-            </span>
+      <div className="container mx-auto px-4 md:px-6 h-16 md:h-20 flex items-center justify-between gap-4">
+        
+        {/* Mobile Left: Logo & Menu */}
+        <div className="flex items-center gap-3 md:hidden">
+          <Link href="/" className="text-xl font-extrabold tracking-tight text-primary">
+            BHISHMA
+          </Link>
+        </div>
+
+        {/* Desktop Left: Logo */}
+        <Link href="/" className="hidden md:block flex-shrink-0">
+          <span className="text-2xl font-extrabold tracking-tight text-primary">
+            BHISHMA
+          </span>
+        </Link>
+
+        {/* Search Bar (Expandable on Mobile, Large on Desktop) */}
+        <div className="flex-1 max-w-2xl relative">
+          <form action="/search" className="w-full flex shadow-sm rounded-full overflow-hidden border border-border focus-within:border-primary focus-within:ring-1 focus-within:ring-primary transition-all bg-muted/30">
+            <input 
+              type="text" 
+              name="q"
+              placeholder="Search products..." 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="flex-1 px-4 py-2 text-sm md:py-2.5 outline-none bg-transparent placeholder:text-muted-foreground text-foreground"
+            />
+            <button type="submit" className="bg-primary px-4 md:px-6 flex items-center justify-center hover:bg-primary/90 transition-colors">
+              <Search className="w-4 h-4 md:w-5 md:h-5 text-primary-foreground" />
+            </button>
+          </form>
+        </div>
+
+        {/* Desktop Right Actions */}
+        <div className="hidden md:flex items-center gap-6 flex-shrink-0">
+          
+          <Link href="/seller" className="text-sm font-medium text-accent hover:text-accent/80 flex items-center gap-1 transition-colors">
+            <Package className="w-4 h-4" /> Sell
+          </Link>
+          
+          <Link href="/categories" className="text-sm font-medium text-foreground hover:text-primary transition-colors">
+            Categories
           </Link>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-8">
-            {navLinks.map((link) => (
-              <Link
-                key={link.name}
-                href={link.href}
-                className="text-sm font-medium text-foreground hover:text-primary transition-colors relative group"
-              >
-                {link.name}
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
-              </Link>
-            ))}
-          </nav>
+          <div className="h-6 w-px bg-border" /> {/* Divider */}
 
-          {/* Icons & Search */}
-          <div className="hidden lg:flex items-center gap-6">
-            <form action="/products" className="relative flex items-center">
-              <input 
-                type="text" 
-                name="q"
-                placeholder="Search products..." 
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 pr-4 py-2 rounded-full border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 w-48 transition-all focus:w-64"
-              />
-              <button type="submit" className="absolute left-3 text-muted-foreground hover:text-primary transition-colors">
-                <Search className="w-4 h-4" />
-              </button>
-            </form>
-            <Link href="/cart" className="relative text-foreground hover:text-primary transition-colors">
+          <Link href="/account/wishlist" className="flex flex-col items-center hover:text-primary transition-colors text-muted-foreground group">
+            <Heart className="w-5 h-5 group-hover:fill-primary/20" />
+            <span className="text-[10px] font-semibold mt-1">Wishlist</span>
+          </Link>
+
+          <Link href="/orders" className="flex flex-col items-center hover:text-primary transition-colors text-muted-foreground">
+            <Package className="w-5 h-5" />
+            <span className="text-[10px] font-semibold mt-1">Orders</span>
+          </Link>
+
+          <Link href="/account" className="flex flex-col items-center hover:text-primary transition-colors text-muted-foreground">
+            <User className="w-5 h-5" />
+            <span className="text-[10px] font-semibold mt-1">Profile</span>
+          </Link>
+
+          <Link href="/cart" className="flex flex-col items-center hover:text-primary transition-colors text-muted-foreground relative">
+            <div className="relative">
               <ShoppingCart className="w-5 h-5" />
               {cartCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-accent text-white text-xs font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                <span className="absolute -top-2 -right-2 bg-accent text-primary-foreground text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
                   {cartCount}
                 </span>
               )}
-            </Link>
-            <Link href="/seller/dashboard" className="text-foreground hover:text-primary transition-colors" title="Seller Dashboard">
-              <User className="w-5 h-5" />
-            </Link>
-          </div>
+            </div>
+            <span className="text-[10px] font-semibold mt-1">Cart</span>
+          </Link>
 
-          {/* Mobile Menu Toggle */}
-          <button
-            className="lg:hidden text-foreground"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          >
-            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
         </div>
       </div>
-
-      {/* Mobile Menu */}
-      <AnimatePresence>
-        {mobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className="lg:hidden glassmorphism border-t border-border mt-4"
-          >
-            <div className="flex flex-col px-4 py-4 space-y-4">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.name}
-                  href={link.href}
-                  className="text-base font-medium text-foreground hover:text-primary transition-colors py-2"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  {link.name}
-                </Link>
-              ))}
-              <div className="flex items-center gap-6 pt-4 border-t border-border">
-                <button className="text-foreground hover:text-primary transition-colors">
-                  <Search className="w-5 h-5" />
-                </button>
-                <Link href="/cart" className="relative text-foreground hover:text-primary transition-colors">
-                  <ShoppingCart className="w-5 h-5" />
-                  {cartCount > 0 && (
-                    <span className="absolute -top-2 -right-2 bg-accent text-white text-xs font-bold w-4 h-4 rounded-full flex items-center justify-center">
-                      {cartCount}
-                    </span>
-                  )}
-                </Link>
-                <button className="text-foreground hover:text-primary transition-colors">
-                  <User className="w-5 h-5" />
-                </button>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      
+      {/* Desktop Secondary Nav (Categories) */}
+      <div className="hidden md:flex bg-muted/30 border-t border-border">
+        <div className="container mx-auto px-6 h-10 flex items-center gap-6">
+          <Link href="/categories" className="flex items-center gap-2 text-sm font-bold text-foreground hover:text-primary">
+            <Menu className="w-4 h-4" /> All Categories
+          </Link>
+          {categories.map(cat => (
+            <Link key={cat.slug} href={`/categories/${cat.slug}`} className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
+              {cat.name}
+            </Link>
+          ))}
+        </div>
+      </div>
     </header>
   );
 }

@@ -1,9 +1,7 @@
 "use server";
 
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
-
-const prisma = new PrismaClient();
 
 export async function createProduct(formData: FormData) {
   const name = formData.get("name") as string;
@@ -24,8 +22,9 @@ export async function createProduct(formData: FormData) {
   });
 
   if (!category) {
+    const slug = categoryName.toLowerCase().replace(/[^a-z0-9]+/g, "-");
     category = await prisma.category.create({
-      data: { name: categoryName }
+      data: { name: categoryName, slug }
     });
   }
 
@@ -35,7 +34,7 @@ export async function createProduct(formData: FormData) {
       description,
       price,
       quantity,
-      image,
+      imageUrls: image ? [image] : [],
       categoryId: category.id,
       sellerId,
     }

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Outfit } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/layout/Navbar";
+import { BottomNav } from "@/components/layout/BottomNav";
 import { Footer } from "@/components/layout/Footer";
 import { CartProvider } from "@/lib/CartContext";
 import { SessionProvider } from "@/components/providers/SessionProvider";
@@ -30,10 +31,11 @@ export default function RootLayout({
         <SessionProvider>
           <CartProvider>
             <Navbar />
-            <main className="flex-1">
+            <main className="flex-1 pb-16 md:pb-0">
               {children}
             </main>
             <Footer />
+            <BottomNav />
           </CartProvider>
         </SessionProvider>
       </body>

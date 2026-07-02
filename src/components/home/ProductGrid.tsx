@@ -1,54 +1,56 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { ProductCard, Product } from "./ProductCard";
-
-const DUMMY_PRODUCTS: Product[] = [
-  { id: "1", name: "Fresh Tomato", price: 399, weight: "1 kg", category: "Vegetables", image: "/images/tomato.png", isOrganic: true, color: "#ef4444" },
-  { id: "2", name: "Organic Potato", price: 279, weight: "2 kg", category: "Vegetables", image: "/images/potato.png", isOrganic: true, color: "#d97706" },
-  { id: "3", name: "Crispy Carrot", price: 239, weight: "1 kg", category: "Vegetables", image: "/images/carrot.png", isOrganic: true, color: "#f97316" },
-  { id: "4", name: "Green Spinach", price: 479, weight: "500 g", category: "Vegetables", image: "/images/spinach.png", isOrganic: true, color: "#22c55e" },
-  { id: "5", name: "Sweet Apple", price: 559, weight: "1 kg", category: "Fruits", image: "/images/apple.png", isOrganic: true, color: "#dc2626" },
-  { id: "6", name: "Alphonso Mango", price: 719, weight: "1 kg", category: "Fruits", image: "/images/mango.png", isOrganic: true, color: "#fbbf24" },
-  { id: "7", name: "Juicy Orange", price: 439, weight: "1 kg", category: "Fruits", image: "/images/orange.png", isOrganic: true, color: "#f97316" },
-  { id: "8", name: "Fresh Banana", price: 199, weight: "1 kg", category: "Fruits", image: "/images/banana.png", isOrganic: true, color: "#facc15" },
-];
+import { ProductCard } from "./ProductCard";
+import { ArrowRight, Loader2 } from "lucide-react";
 
 export function ProductGrid() {
   const [activeFilter, setActiveFilter] = useState("All");
+  const [products, setProducts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   
   const filters = ["All", "Vegetables", "Fruits"];
-  
-  const filteredProducts = useMemo(() => {
-    return activeFilter === "All" 
-      ? DUMMY_PRODUCTS 
-      : DUMMY_PRODUCTS.filter(p => p.category === activeFilter);
+
+  useEffect(() => {
+    setLoading(true);
+    let url = "/api/products?limit=10";
+    if (activeFilter !== "All") {
+      url += `&category=${activeFilter.toLowerCase()}`;
+    }
+    
+    fetch(url)
+      .then(r => r.json())
+      .then(d => {
+        setProducts(d.products || []);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
   }, [activeFilter]);
 
   return (
-    <section className="py-24 bg-background relative" id="products">
-      <div className="container mx-auto px-4">
+    <section className="py-16 md:py-24 bg-background relative" id="products">
+      <div className="container mx-auto px-4 lg:px-8 max-w-[1440px]">
         
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
           <div className="max-w-2xl">
             <motion.h2 
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="text-3xl md:text-4xl font-bold mb-4"
+              className="text-h2 text-foreground mb-2 flex items-center gap-2"
             >
-              Fresh From <span className="text-primary">The Farm</span>
+              Today's <span className="text-primary">Fresh Harvest</span>
             </motion.h2>
             <motion.p 
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.1 }}
-              className="text-muted-foreground text-lg"
+              className="text-body text-muted-foreground"
             >
-              Discover our handpicked selection of 100% organic, pesticide-free produce delivered straight to your kitchen.
+              100% organic, pesticide-free produce straight from trusted farms.
             </motion.p>
           </div>
           
@@ -56,16 +58,16 @@ export function ProductGrid() {
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide"
+            className="flex gap-2 overflow-x-auto pb-2 no-scrollbar"
           >
             {filters.map((filter) => (
               <button
                 key={filter}
                 onClick={() => setActiveFilter(filter)}
-                className={`px-6 py-2 rounded-full font-medium transition-all whitespace-nowrap ${
+                className={`px-5 py-2 rounded-full text-sm font-bold transition-all whitespace-nowrap border ${
                   activeFilter === filter
-                    ? "bg-primary text-white shadow-md"
-                    : "bg-muted text-muted-foreground hover:bg-primary/10 hover:text-primary"
+                    ? "bg-primary border-primary text-primary-foreground shadow-sm"
+                    : "bg-background border-border text-foreground hover:border-primary/50 hover:text-primary"
                 }`}
               >
                 {filter}
@@ -74,16 +76,28 @@ export function ProductGrid() {
           </motion.div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {filteredProducts.map((product, index) => (
-            <ProductCard key={product.id} product={product} index={index} />
-          ))}
-        </div>
+        {loading ? (
+          <div className="flex justify-center py-20">
+            <Loader2 className="w-8 h-8 animate-spin text-primary" />
+          </div>
+        ) : products.length === 0 ? (
+          <div className="text-center py-12 text-muted-foreground">
+            No products available at the moment.
+          </div>
+        ) : (
+          <div className="flex overflow-x-auto md:grid md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-5 pb-6 md:pb-0 snap-x snap-mandatory no-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
+            {products.map((product, index) => (
+              <div key={product.id} className="min-w-[75vw] sm:min-w-[45vw] md:min-w-0 snap-start snap-always">
+                <ProductCard product={product} index={index} />
+              </div>
+            ))}
+          </div>
+        )}
         
-        <div className="mt-16 text-center">
-          <Link href="/products" className="text-primary font-semibold hover:text-gold transition-colors inline-flex items-center gap-2 group">
+        <div className="mt-10 md:mt-12 text-center">
+          <Link href="/products" className="text-primary font-bold hover:text-primary/80 transition-colors inline-flex items-center gap-2 group bg-background border border-border px-8 py-3 rounded-full hover:shadow-md">
             View All Products
-            <span className="group-hover:translate-x-1 transition-transform">→</span>
+            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </Link>
         </div>
       </div>

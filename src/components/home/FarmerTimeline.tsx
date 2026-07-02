@@ -1,115 +1,131 @@
 "use client";
 
 import { useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
-import { Sprout, CheckCircle2, PackageCheck, Home } from "lucide-react";
+import { motion, useScroll } from "framer-motion";
+import { Sprout, Leaf, ShieldCheck, Package, Home } from "lucide-react";
 
 export function FarmerTimeline() {
   const containerRef = useRef<HTMLDivElement>(null);
   
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ["start end", "end start"]
+    offset: ["start center", "end center"]
   });
 
   const steps = [
     {
-      title: "Farmer Direct Supply",
-      description: "Direct partnership with local farmers to ensure fair trade and fresh produce.",
-      icon: <Sprout className="w-8 h-8" />,
-      color: "bg-primary text-primary-foreground",
+      title: "Farmer Direct",
+      description: "Fresh produce sourced directly from trusted farmers.",
+      icon: <Sprout className="w-8 h-8 text-primary group-hover:text-primary-foreground transition-colors" />,
     },
     {
-      title: "Fresh Picking Process",
-      description: "Produce is hand-picked at peak ripeness for maximum flavor and nutrition.",
-      icon: <CheckCircle2 className="w-8 h-8" />,
-      color: "bg-green-600 text-white",
+      title: "Fresh Picking",
+      description: "Vegetables and fruits are picked at peak freshness.",
+      icon: <Leaf className="w-8 h-8 text-primary group-hover:text-primary-foreground transition-colors" />,
     },
     {
-      title: "Quality Checking Process",
-      description: "Rigorous testing for pesticide residue and overall quality standards.",
-      icon: <CheckCircle2 className="w-8 h-8" />,
-      color: "bg-gold text-white",
+      title: "Quality Check",
+      description: "Every product passes quality checks before delivery.",
+      icon: <ShieldCheck className="w-8 h-8 text-primary group-hover:text-primary-foreground transition-colors" />,
     },
     {
-      title: "Safe Packaging",
-      description: "Eco-friendly, safe packaging to preserve freshness during transit.",
-      icon: <PackageCheck className="w-8 h-8" />,
-      color: "bg-accent text-white",
+      title: "Eco Packaging",
+      description: "Eco-friendly packaging keeps products fresh.",
+      icon: <Package className="w-8 h-8 text-primary group-hover:text-primary-foreground transition-colors" />,
     },
     {
-      title: "Home Delivery From Farm To Customer",
-      description: "Swift, temperature-controlled delivery directly to your doorstep.",
-      icon: <Home className="w-8 h-8" />,
-      color: "bg-secondary text-secondary-foreground",
+      title: "Fast Delivery",
+      description: "Fast delivery from farms directly to your doorstep.",
+      icon: <Home className="w-8 h-8 text-primary group-hover:text-primary-foreground transition-colors" />,
     },
   ];
 
   return (
-    <section className="py-24 bg-background relative overflow-hidden" ref={containerRef} id="process">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
+    <section 
+      className="py-16 md:py-24 bg-background relative overflow-hidden" 
+      ref={containerRef} 
+      id="process"
+    >
+      <div className="container mx-auto px-4 max-w-7xl">
+        <div className="text-center mb-16 relative z-10">
           <motion.h2 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-3xl md:text-5xl font-bold mb-4"
+            className="text-h2 font-extrabold mb-4 text-foreground tracking-tight"
           >
-            From Farm To <span className="text-primary">Your Home</span>
+            From Farm To <span className="text-primary relative inline-block">
+              Your Home
+              <span className="absolute bottom-1 left-0 w-full h-3 bg-accent/30 -z-10 rounded-full" />
+            </span>
           </motion.h2>
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="text-lg text-muted-foreground max-w-2xl mx-auto"
+            className="text-body text-muted-foreground max-w-2xl mx-auto font-medium"
           >
-            Our transparent and swift supply chain ensures that you get the freshest produce possible.
+            Every step is carefully managed to deliver fresh pesticide-free produce.
           </motion.p>
         </div>
 
-        <div className="relative max-w-4xl mx-auto mt-20">
-          {/* Animated Line connecting steps */}
-          <div className="hidden md:block absolute top-1/2 left-0 w-full h-1 bg-border/50 -translate-y-1/2 z-0" />
+        <div className="relative mt-12 md:mt-20">
+          {/* Desktop Timeline Line */}
+          <div className="hidden lg:block absolute top-[2.5rem] left-[10%] right-[10%] h-[2px] bg-border z-0" />
           <motion.div 
-            className="hidden md:block absolute top-1/2 left-0 h-1 bg-primary -translate-y-1/2 z-0 origin-left" 
+            className="hidden lg:block absolute top-[2.5rem] left-[10%] right-[10%] h-[2px] bg-gradient-to-r from-primary to-accent origin-left z-0" 
             style={{ scaleX: scrollYProgress }}
           />
 
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-12 md:gap-4 relative z-10">
-            {steps.map((step, index) => {
-              const isEven = index % 2 === 0;
-              return (
-                <motion.div 
-                  key={index}
-                  initial={{ opacity: 0, y: 50 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-100px" }}
-                  transition={{ delay: index * 0.2, type: "spring", stiffness: 50 }}
-                  className="flex flex-col items-center text-center relative group"
-                >
-                  {/* Vertical line for mobile */}
-                  {index !== steps.length - 1 && (
-                    <div className="md:hidden absolute top-24 left-1/2 w-0.5 h-20 bg-border/50 -translate-x-1/2 z-0" />
-                  )}
+          {/* Tablet/Mobile Timeline Line */}
+          <div className="lg:hidden absolute top-[2.5rem] bottom-[2.5rem] left-[2.5rem] w-[2px] bg-border z-0" />
+          <motion.div 
+            className="lg:hidden absolute top-[2.5rem] bottom-[2.5rem] left-[2.5rem] w-[2px] bg-gradient-to-b from-primary to-accent origin-top z-0" 
+            style={{ scaleY: scrollYProgress }}
+          />
 
-                  <div className={`w-20 h-20 rounded-full flex items-center justify-center mb-6 shadow-xl ${step.color} transform group-hover:scale-110 transition-transform duration-300 relative z-10 border-4 border-background`}>
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-10 lg:gap-6 relative z-10">
+            {steps.map((step, index) => (
+              <motion.div 
+                key={index}
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ delay: index * 0.15, duration: 0.6, ease: "easeOut" }}
+                className="flex flex-row lg:flex-col items-start lg:items-center relative group h-full"
+              >
+                {/* Icon Container */}
+                <div className="flex-shrink-0 w-20 h-20 rounded-full flex items-center justify-center relative z-10 transition-all duration-500 ease-out group-hover:scale-110 bg-background border-2 border-border shadow-sm group-hover:border-primary group-hover:bg-primary group-hover:shadow-lg">
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    whileInView={{ scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: index * 0.1 + 0.3, type: "spring", stiffness: 200, damping: 15 }}
+                    className="relative z-10"
+                  >
                     {step.icon}
-                  </div>
-                  
-                  <div className={`md:absolute md:w-48 ${isEven ? 'md:top-28' : 'md:-top-32'} flex flex-col items-center`}>
-                    <h3 className="text-xl font-bold mb-2 text-foreground">{step.title}</h3>
-                    <p className="text-sm text-muted-foreground">{step.description}</p>
-                  </div>
-                </motion.div>
-              );
-            })}
+                  </motion.div>
+                </div>
+                
+                {/* Card */}
+                <div className="ml-6 lg:ml-0 lg:mt-8 bg-card rounded-2xl p-6 lg:p-5 xl:p-6 w-full flex flex-col lg:text-center transition-all duration-500 border border-border shadow-sm group-hover:-translate-y-2 group-hover:border-primary/50 flex-1 relative overflow-hidden">
+                  <h3 className="text-xl lg:text-lg xl:text-xl font-bold mb-3 text-card-foreground group-hover:text-primary transition-colors duration-300">
+                    {step.title}
+                  </h3>
+                  <p className="text-sm text-muted-foreground font-medium leading-relaxed">
+                    {step.description}
+                  </p>
+                </div>
+              </motion.div>
+            ))}
           </div>
         </div>
       </div>
       
-      {/* Decorative */}
-      <div className="absolute top-0 right-0 w-64 h-64 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPgo8cmVjdCB3aWR0aD0iOCIgaGVpZ2h0PSI4IiBmaWxsPSIjZmZmZmZmIiBmaWxsLW9wYWNpdHk9IjAuMSIvPgo8cGF0aCBkPSJNMCAwbDhfOHptOCAwTDBfOHoiIHN0cm9rZT0iIzJBNTk0MSIgc3Ryb2tlLW9wYWNpdHk9IjAuMDUiLz4KPC9zdmc+')] opacity-20 pointer-events-none" />
+      {/* Decorative Background Elements */}
+      <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-primary/5 rounded-full blur-3xl opacity-50 -translate-y-1/2 translate-x-1/3 pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-accent/5 rounded-full blur-3xl opacity-50 translate-y-1/3 -translate-x-1/4 pointer-events-none" />
     </section>
   );
 }
